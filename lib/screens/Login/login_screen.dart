@@ -1,8 +1,15 @@
+import 'package:clinic_management_app/screens/Login/forgotpw_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:clinic_management_app/screens/Register/otp_register_screen.dart';
 
-class RegisterScreen extends StatelessWidget {
-  const RegisterScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
@@ -35,26 +42,26 @@ class RegisterScreen extends StatelessWidget {
           // Form block
           Expanded(
             child: Container(
+              width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 24),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+                    color: Colors.black26,
+                    blurRadius: 4,
+                    offset: Offset(0, -2),
                   ),
                 ],
               ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
-                    'Đăng ký',
+                    'Đăng nhập',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -63,15 +70,7 @@ class RegisterScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
 
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Text(
-                      'Nhập số điện thoại để tạo tài khoản mới',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
+                  // Số điện thoại
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: TextField(
@@ -92,9 +91,39 @@ class RegisterScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 16),
+
+                  // Mật khẩu
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: TextField(
+                      obscureText: _obscurePassword,
+                      decoration: InputDecoration(
+                        hintText: 'Nhập mật khẩu',
+                        filled: true,
+                        fillColor: const Color(0xFFF3F5F9),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                          ),
+                          onPressed: () => setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          }),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 24),
 
-                  // Nút Đăng ký với animation slide
+                  // Nút Đăng nhập
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: SizedBox(
@@ -102,19 +131,7 @@ class RegisterScreen extends StatelessWidget {
                       height: 48,
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).push(PageRouteBuilder(
-                            pageBuilder: (_, __, ___) =>
-                                const OtpScreen(isForgotFlow: false),
-                            transitionsBuilder: (_, animation, __, child) {
-                              final tween = Tween(
-                                      begin: const Offset(1, 0),
-                                      end: Offset.zero)
-                                  .chain(CurveTween(curve: Curves.ease));
-                              return SlideTransition(
-                                  position: animation.drive(tween),
-                                  child: child);
-                            },
-                          ));
+                          // TODO: handle login
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2196F3),
@@ -123,7 +140,7 @@ class RegisterScreen extends StatelessWidget {
                           ),
                         ),
                         child: const Text(
-                          'Đăng ký',
+                          'Đăng nhập',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -133,6 +150,38 @@ class RegisterScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+
+                  const SizedBox(height: 12),
+
+                  // Quên mật khẩu
+                  TextButton(
+                    onPressed: () {
+                      // TODO: navigate to reset password
+                      Navigator.of(context).push(PageRouteBuilder(
+                            pageBuilder: (context, animation, secondaryAnimation) => const ForgotPasswordScreen(),
+                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              const begin = Offset(1.0, 0.0);
+                              const end = Offset.zero;
+                              const curve = Curves.ease;
+                              final tween = Tween(begin: begin, end: end)
+                                  .chain(CurveTween(curve: curve));
+                              return SlideTransition(
+                                position: animation.drive(tween),
+                                child: child,
+                              );
+                            },
+                          ));
+                    },
+                    child: const Text(
+                      'Quên mật khẩu?',
+                      style: TextStyle(
+                        color: Color(0xFF1A237E),
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+
+                  const Spacer(),
                 ],
               ),
             ),

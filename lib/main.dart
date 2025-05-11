@@ -1,4 +1,10 @@
+
+import 'package:clinic_management_app/screens/Login/otpSuccess_screen.dart';
+import 'package:clinic_management_app/screens/Register/createpw_register_screen.dart';
 import 'package:flutter/material.dart';
+
+// import classes
+import 'package:clinic_management_app/screens/Login/login_screen.dart';
 import 'package:clinic_management_app/screens/welcome/welcome_screen.dart';
 import 'package:clinic_management_app/screens/Register/register_screen.dart';
 import 'package:clinic_management_app/screens/Register/otp_register_screen.dart';
@@ -20,8 +26,11 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const WelcomeScreen(),
         '/register': (context) => const RegisterScreen(),
-        '/otp': (context) => const OtpScreen(),
-        // '/login': (context) => const LoginScreen(), // thêm khi có màn login
+        // '/otp': (context) => const OtpScreen(),
+        '/login': (context) => const LoginScreen(),
+        // '/forgot': (context) => const OtpScreen(),
+        '/otp_success': (c) => const OtpSuccessScreen(),
+        '/create_password': (c) => const CreatePasswordScreen(),
       },
     );
   }

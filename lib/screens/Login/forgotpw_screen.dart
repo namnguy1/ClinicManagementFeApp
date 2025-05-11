@@ -1,12 +1,8 @@
+import 'package:clinic_management_app/screens/Register/otp_register_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:clinic_management_app/screens/Register/createpw_register_screen.dart';
 
-class OtpScreen extends StatelessWidget {
-  /// isForgotFlow = true khi từ ForgotPassword
-  /// isForgotFlow = false khi từ Register
-  final bool isForgotFlow;
-
-  const OtpScreen({Key? key, required this.isForgotFlow}) : super(key: key);
+class ForgotPasswordScreen extends StatelessWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,24 +37,26 @@ class OtpScreen extends StatelessWidget {
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 24),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: const BorderRadius.only(
+                borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+                    color: Colors.black26,
+                    blurRadius: 4,
+                    offset: Offset(0, -2),
                   ),
                 ],
               ),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
+                  // Tiêu đề
                   const Text(
-                    'Nhập mã xác thực',
+                    'Nhập số điện thoại',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -66,42 +64,40 @@ class OtpScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
+
+                  // Hướng dẫn
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24.0),
                     child: Text(
-                      'Vui lòng không chia sẻ mã xác thực để tránh mất tài khoản',
+                      'Nhập số điện thoại để nhận mã xác thực',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 16),
                     ),
                   ),
                   const SizedBox(height: 24),
+
+                  // Số điện thoại input
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: List.generate(5, (index) {
-                        return SizedBox(
-                          width: 48,
-                          height: 56,
-                          child: TextField(
-                            textAlign: TextAlign.center,
-                            keyboardType: TextInputType.number,
-                            maxLength: 1,
-                            decoration: InputDecoration(
-                              counterText: '',
-                              filled: true,
-                              fillColor: const Color(0xFFF3F5F9),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide.none,
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
+                    child: TextField(
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        prefixText: '+84 ',
+                        hintText: 'Nhập số điện thoại',
+                        filled: true,
+                        fillColor: const Color(0xFFF3F5F9),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
 
                   // Nút Tiếp tục
                   Padding(
@@ -111,20 +107,19 @@ class OtpScreen extends StatelessWidget {
                       height: 48,
                       child: ElevatedButton(
                         onPressed: () {
-                          if (isForgotFlow) {
-                            // Quên mật khẩu → đến màn OTP Success
-                            Navigator.pushNamed(context, '/otp_success');
-                          } else {
-                            // Đăng ký → đến CreatePassword
-                            Navigator.of(context).push(PageRouteBuilder(
-                              pageBuilder: (_, __, ___) => const CreatePasswordScreen(),
-                              transitionsBuilder: (_, animation, __, child) {
-                                final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
-                                    .chain(CurveTween(curve: Curves.ease));
-                                return SlideTransition(position: animation.drive(tween), child: child);
-                              },
-                            ));
-                          }
+                          Navigator.of(context).push(PageRouteBuilder(
+                            pageBuilder: (_, __, ___) =>
+                                const OtpScreen(isForgotFlow: true),
+                            transitionsBuilder: (_, animation, __, child) {
+                              final tween = Tween(
+                                      begin: const Offset(1, 0),
+                                      end: Offset.zero)
+                                  .chain(CurveTween(curve: Curves.ease));
+                              return SlideTransition(
+                                  position: animation.drive(tween),
+                                  child: child);
+                            },
+                          ));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2196F3),
