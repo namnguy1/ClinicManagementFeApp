@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:clinic_management_app/screens/Register/createpw_register_screen.dart';
 
 class OtpScreen extends StatelessWidget {
   const OtpScreen({super.key});
@@ -17,7 +18,7 @@ class OtpScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // Logo trong nền xanh
+          // Logo block
           Container(
             width: double.infinity,
             color: const Color(0xFF2196F3),
@@ -29,10 +30,9 @@ class OtpScreen extends StatelessWidget {
               ),
             ),
           ),
-
           const SizedBox(height: 16),
 
-          // Phần trắng bo góc trên
+          // Form block
           Expanded(
             child: Container(
               width: double.infinity,
@@ -53,7 +53,6 @@ class OtpScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  // Tiêu đề
                   const Text(
                     'Nhập mã xác thực',
                     style: TextStyle(
@@ -63,8 +62,6 @@ class OtpScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-
-                  // Mô tả
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24.0),
                     child: Text(
@@ -74,8 +71,6 @@ class OtpScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-
-                  // Ô nhập OTP
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Row(
@@ -104,7 +99,7 @@ class OtpScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 32),
 
-                  // Nút Tiếp tục
+                  // Nút Tiếp tục → chuyển slide vào CreatePasswordScreen
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: SizedBox(
@@ -112,7 +107,14 @@ class OtpScreen extends StatelessWidget {
                       height: 48,
                       child: ElevatedButton(
                         onPressed: () {
-                          // TODO: xử lý tiếp tục
+                          Navigator.of(context).push(PageRouteBuilder(
+                            pageBuilder: (_, a1, a2) => const CreatePasswordScreen(),
+                            transitionsBuilder: (_, animation, __, child) {
+                              final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                                  .chain(CurveTween(curve: Curves.ease));
+                              return SlideTransition(position: animation.drive(tween), child: child);
+                            },
+                          ));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2196F3),
