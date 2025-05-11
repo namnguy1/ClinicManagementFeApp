@@ -1,5 +1,7 @@
-import 'package:clinic_management_app/screens/welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:clinic_management_app/screens/welcome/welcome_screen.dart';
+import 'package:clinic_management_app/screens/Register/register_screen.dart';
+import 'package:clinic_management_app/screens/Register/otp_register_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,8 +19,9 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const WelcomeScreen(),
-        '/login': (context) => const Placeholder(),     // thay bằng LoginScreen sau
-        '/register': (context) => const Placeholder(),  // thay bằng RegisterScreen sau
+        '/register': (context) => const RegisterScreen(),
+        '/otp': (context) => const OtpScreen(),
+        // '/login': (context) => const LoginScreen(), // thêm khi có màn login
       },
     );
   }

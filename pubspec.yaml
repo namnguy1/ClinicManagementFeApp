@@ -57,6 +57,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/images/home_logo.png
+    - assets/images/home_logo2.png
     - assets/images/family.png
     - assets/images/background_buildings.png
 
