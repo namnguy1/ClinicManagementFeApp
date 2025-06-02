@@ -1,8 +1,8 @@
+import 'package:clinic_management_app/features/auth/screens/Register/addInfo_register_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:clinic_management_app/screens/Register/otp_register_screen.dart';
 
-class RegisterScreen extends StatelessWidget {
-  const RegisterScreen({super.key});
+class CreatePasswordScreen extends StatelessWidget {
+  const CreatePasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +35,7 @@ class RegisterScreen extends StatelessWidget {
           // Form block
           Expanded(
             child: Container(
+              width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 24),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -53,8 +54,9 @@ class RegisterScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // Tiêu đề
                   const Text(
-                    'Đăng ký',
+                    'Tạo mật khẩu',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -63,24 +65,76 @@ class RegisterScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
 
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Text(
-                      'Nhập số điện thoại để tạo tài khoản mới',
-                      style: TextStyle(fontSize: 16),
+                  // Nhãn & hướng dẫn
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            'Mật khẩu mới:',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF1A237E),
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'Mật khẩu phải bao gồm chữ và số.',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
 
+                  // Ô nhập mật khẩu mới
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: TextField(
-                      keyboardType: TextInputType.phone,
+                      obscureText: true,
                       decoration: InputDecoration(
-                        prefixText: '+84 ',
-                        hintText: 'Nhập số điện thoại',
+                        hintText: 'Nhập mật khẩu mới',
                         filled: true,
                         fillColor: const Color(0xFFF3F5F9),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.visibility_off),
+                          onPressed: () {
+                            // TODO: toggle visibility
+                          },
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Ô nhập lại mật khẩu
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: TextField(
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        hintText: 'Nhập lại mật khẩu mới',
+                        filled: true,
+                        fillColor: const Color(0xFFF3F5F9),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.visibility_off),
+                          onPressed: () {
+                            // TODO: toggle visibility
+                          },
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
@@ -94,7 +148,7 @@ class RegisterScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
 
-                  // Nút Đăng ký với animation slide
+                  // Nút Tiếp tục → slide sang AddInfoScreen
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: SizedBox(
@@ -103,16 +157,17 @@ class RegisterScreen extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).push(PageRouteBuilder(
-                            pageBuilder: (_, __, ___) =>
-                                const OtpScreen(isForgotFlow: false),
-                            transitionsBuilder: (_, animation, __, child) {
-                              final tween = Tween(
-                                      begin: const Offset(1, 0),
-                                      end: Offset.zero)
-                                  .chain(CurveTween(curve: Curves.ease));
+                            pageBuilder: (_, __, ___) => const AddInfoScreen(),
+                            transitionsBuilder:
+                                (context, animation, secondary, child) {
+                              final tween = Tween<Offset>(
+                                begin: const Offset(1, 0),
+                                end: Offset.zero,
+                              ).chain(CurveTween(curve: Curves.ease));
                               return SlideTransition(
-                                  position: animation.drive(tween),
-                                  child: child);
+                                position: animation.drive(tween),
+                                child: child,
+                              );
                             },
                           ));
                         },
@@ -123,7 +178,7 @@ class RegisterScreen extends StatelessWidget {
                           ),
                         ),
                         child: const Text(
-                          'Đăng ký',
+                          'Tiếp tục',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -133,6 +188,8 @@ class RegisterScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+
+                  const Spacer(),
                 ],
               ),
             ),

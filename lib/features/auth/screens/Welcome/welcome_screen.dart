@@ -1,5 +1,5 @@
+import 'package:clinic_management_app/features/auth/widgets/welcome_button.dart';
 import 'package:flutter/material.dart';
-import 'package:clinic_management_app/widgets/welcome_button.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});

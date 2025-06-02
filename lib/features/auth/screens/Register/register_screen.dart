@@ -1,8 +1,77 @@
-import 'package:clinic_management_app/screens/Register/otp_register_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:clinic_management_app/features/auth/screens/Register/otp_register_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class ForgotPasswordScreen extends StatelessWidget {
-  const ForgotPasswordScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  final _phoneController = TextEditingController();
+  String _verificationId = '';
+
+  void _sendOTP() async {
+    try {
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: '+84${_phoneController.text}',
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          // Tự động xác minh (Android)
+          await FirebaseAuth.instance.signInWithCredential(credential);
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Lỗi: ${e.message}')),
+          );
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          setState(() {
+            _verificationId = verificationId;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('OTP đã được gửi')),
+          );
+          // Delay 2 seconds before navigating to OTP screen
+          Future.delayed(const Duration(seconds: 2), () {
+            Navigator.of(context).push(PageRouteBuilder(
+              pageBuilder: (_, __, ___) => OtpScreen(
+                isForgotFlow: false,
+                verificationId: _verificationId,
+                phoneNumber: _phoneController.text,
+              ),
+              transitionsBuilder: (_, animation, __, child) {
+                final tween = Tween(
+                  begin: const Offset(1, 0),
+                  end: Offset.zero,
+                ).chain(CurveTween(curve: Curves.ease));
+                return SlideTransition(
+                  position: animation.drive(tween),
+                  child: child,
+                );
+              },
+            ));
+          });
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          setState(() {
+            _verificationId = verificationId;
+          });
+        },
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi: ${e.toString()}')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,28 +104,26 @@ class ForgotPasswordScreen extends StatelessWidget {
           // Form block
           Expanded(
             child: Container(
-              width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 24),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 4,
-                    offset: Offset(0, -2),
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Tiêu đề
                   const Text(
-                    'Nhập số điện thoại',
+                    'Đăng ký',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -65,21 +132,19 @@ class ForgotPasswordScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
 
-                  // Hướng dẫn
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24.0),
                     child: Text(
-                      'Nhập số điện thoại để nhận mã xác thực',
-                      textAlign: TextAlign.center,
+                      'Nhập số điện thoại để tạo tài khoản mới',
                       style: TextStyle(fontSize: 16),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 12),
 
-                  // Số điện thoại input
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: TextField(
+                      controller: _phoneController,
                       keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
                         prefixText: '+84 ',
@@ -99,28 +164,14 @@ class ForgotPasswordScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
 
-                  // Nút Tiếp tục
+                  // Nút Đăng ký với animation slide
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: SizedBox(
                       width: double.infinity,
                       height: 48,
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(PageRouteBuilder(
-                            pageBuilder: (_, __, ___) =>
-                                const OtpScreen(isForgotFlow: true),
-                            transitionsBuilder: (_, animation, __, child) {
-                              final tween = Tween(
-                                      begin: const Offset(1, 0),
-                                      end: Offset.zero)
-                                  .chain(CurveTween(curve: Curves.ease));
-                              return SlideTransition(
-                                  position: animation.drive(tween),
-                                  child: child);
-                            },
-                          ));
-                        },
+                        onPressed: _sendOTP,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2196F3),
                           shape: RoundedRectangleBorder(
@@ -128,7 +179,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                           ),
                         ),
                         child: const Text(
-                          'Tiếp tục',
+                          'Đăng ký',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -138,8 +189,6 @@ class ForgotPasswordScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                  const Spacer(),
                 ],
               ),
             ),

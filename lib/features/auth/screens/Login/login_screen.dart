@@ -1,4 +1,4 @@
-import 'package:clinic_management_app/screens/Login/forgotpw_screen.dart';
+import 'package:clinic_management_app/features/auth/screens/Login/forgotpw_screen.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {

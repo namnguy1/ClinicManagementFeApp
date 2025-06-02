@@ -1,12 +1,90 @@
 import 'package:flutter/material.dart';
-import 'package:clinic_management_app/screens/Register/createpw_register_screen.dart';
+import 'package:clinic_management_app/features/auth/screens/Register/createpw_register_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class OtpScreen extends StatelessWidget {
+class OtpScreen extends StatefulWidget {
   /// isForgotFlow = true khi từ ForgotPassword
   /// isForgotFlow = false khi từ Register
   final bool isForgotFlow;
+  final String verificationId;
+  final String phoneNumber;
 
-  const OtpScreen({Key? key, required this.isForgotFlow}) : super(key: key);
+  const OtpScreen({
+    Key? key,
+    required this.isForgotFlow,
+    required this.verificationId,
+    required this.phoneNumber,
+  }) : super(key: key);
+
+  @override
+  State<OtpScreen> createState() => _OtpScreenState();
+}
+
+class _OtpScreenState extends State<OtpScreen> {
+  final List<TextEditingController> _otpControllers = List.generate(
+    6,
+    (index) => TextEditingController(),
+  );
+  final List<FocusNode> _focusNodes = List.generate(
+    6,
+    (index) => FocusNode(),
+  );
+
+  @override
+  void dispose() {
+    for (var controller in _otpControllers) {
+      controller.dispose();
+    }
+    for (var node in _focusNodes) {
+      node.dispose();
+    }
+    super.dispose();
+  }
+
+  void _verifyOTP() async {
+    try {
+      String otp = _otpControllers.map((controller) => controller.text).join();
+      
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: widget.verificationId,
+        smsCode: otp,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Xác minh thành công')),
+        );
+
+        if (widget.isForgotFlow) {
+          // Quên mật khẩu → đến màn OTP Success
+          Navigator.pushNamed(context, '/otp_success');
+        } else {
+          // Đăng ký → đến CreatePassword
+          Navigator.of(context).push(PageRouteBuilder(
+            pageBuilder: (_, __, ___) => const CreatePasswordScreen(),
+            transitionsBuilder: (_, animation, __, child) {
+              final tween = Tween(
+                begin: const Offset(1, 0),
+                end: Offset.zero,
+              ).chain(CurveTween(curve: Curves.ease));
+              return SlideTransition(
+                position: animation.drive(tween),
+                child: child,
+              );
+            },
+          ));
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Xác minh thất bại: ${e.toString()}')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,11 +157,13 @@ class OtpScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: List.generate(5, (index) {
+                      children: List.generate(6, (index) {
                         return SizedBox(
                           width: 48,
                           height: 56,
                           child: TextField(
+                            controller: _otpControllers[index],
+                            focusNode: _focusNodes[index],
                             textAlign: TextAlign.center,
                             keyboardType: TextInputType.number,
                             maxLength: 1,
@@ -96,6 +176,14 @@ class OtpScreen extends StatelessWidget {
                                 borderSide: BorderSide.none,
                               ),
                             ),
+                            onChanged: (value) {
+                              if (value.length == 1 && index < 5) {
+                                _focusNodes[index + 1].requestFocus();
+                              }
+                              if (value.isEmpty && index > 0) {
+                                _focusNodes[index - 1].requestFocus();
+                              }
+                            },
                           ),
                         );
                       }),
@@ -110,22 +198,7 @@ class OtpScreen extends StatelessWidget {
                       width: double.infinity,
                       height: 48,
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (isForgotFlow) {
-                            // Quên mật khẩu → đến màn OTP Success
-                            Navigator.pushNamed(context, '/otp_success');
-                          } else {
-                            // Đăng ký → đến CreatePassword
-                            Navigator.of(context).push(PageRouteBuilder(
-                              pageBuilder: (_, __, ___) => const CreatePasswordScreen(),
-                              transitionsBuilder: (_, animation, __, child) {
-                                final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
-                                    .chain(CurveTween(curve: Curves.ease));
-                                return SlideTransition(position: animation.drive(tween), child: child);
-                              },
-                            ));
-                          }
-                        },
+                        onPressed: _verifyOTP,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2196F3),
                           shape: RoundedRectangleBorder(

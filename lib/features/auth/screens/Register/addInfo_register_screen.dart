@@ -58,7 +58,8 @@ class _AddInfoScreenState extends State<AddInfoScreen> {
                     // Họ và tên
                     const Text(
                       'Họ và tên:',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),
                     TextField(
@@ -71,7 +72,7 @@ class _AddInfoScreenState extends State<AddInfoScreen> {
                           borderSide: BorderSide.none,
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
+                            horizontal: 16, vertical: 14),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -79,7 +80,8 @@ class _AddInfoScreenState extends State<AddInfoScreen> {
                     // Năm sinh
                     const Text(
                       'Năm sinh:',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),
                     TextField(
@@ -93,7 +95,7 @@ class _AddInfoScreenState extends State<AddInfoScreen> {
                           borderSide: BorderSide.none,
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
+                            horizontal: 16, vertical: 14),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -101,14 +103,17 @@ class _AddInfoScreenState extends State<AddInfoScreen> {
                     // Giới tính
                     const Text(
                       'Giới tính:',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
                         Expanded(
                           child: ChoiceChip(
-                            labelPadding: const EdgeInsets.symmetric(horizontal: 35), // Thêm padding để tăng chiều rộng
+                            labelPadding: const EdgeInsets.symmetric(
+                                horizontal:
+                                    35), // Thêm padding để tăng chiều rộng
                             label: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: const [
@@ -129,7 +134,9 @@ class _AddInfoScreenState extends State<AddInfoScreen> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: ChoiceChip(
-                            labelPadding: const EdgeInsets.symmetric(horizontal: 35), // Thêm padding để tăng chiều rộng
+                            labelPadding: const EdgeInsets.symmetric(
+                                horizontal:
+                                    35), // Thêm padding để tăng chiều rộng
                             label: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: const [
@@ -154,7 +161,8 @@ class _AddInfoScreenState extends State<AddInfoScreen> {
                     // Địa chỉ: Tỉnh/thành phố
                     const Text(
                       'Địa chỉ:',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),
                     TextField(
@@ -167,7 +175,7 @@ class _AddInfoScreenState extends State<AddInfoScreen> {
                           borderSide: BorderSide.none,
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
+                            horizontal: 16, vertical: 14),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -181,7 +189,7 @@ class _AddInfoScreenState extends State<AddInfoScreen> {
                           borderSide: BorderSide.none,
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
+                            horizontal: 16, vertical: 14),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -195,7 +203,7 @@ class _AddInfoScreenState extends State<AddInfoScreen> {
                           borderSide: BorderSide.none,
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
+                            horizontal: 16, vertical: 14),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -209,7 +217,7 @@ class _AddInfoScreenState extends State<AddInfoScreen> {
                           borderSide: BorderSide.none,
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
+                            horizontal: 16, vertical: 14),
                       ),
                     ),
 
@@ -221,7 +229,8 @@ class _AddInfoScreenState extends State<AddInfoScreen> {
                       height: 48,
                       child: ElevatedButton(
                         onPressed: () {
-                          // TODO: handle submit
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, '/register_success', (route) => false);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2196F3),
