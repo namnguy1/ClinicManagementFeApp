@@ -1,5 +1,6 @@
 import 'package:clinic_management_app/features/auth/widgets/welcome_button.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -140,7 +141,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                         text: 'ĐĂNG NHẬP',
                         filled: true,
                         onPressed: () {
-                          Navigator.pushNamed(context, '/login');
+                          context.push('/login');
                         },
                       ),
                       const SizedBox(height: 16),
@@ -148,7 +149,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                         text: 'ĐĂNG KÝ MỚI',
                         filled: false,
                         onPressed: () {
-                          Navigator.pushNamed(context, '/register');
+                          context.push('/register');
                         },
                       ),
                     ],

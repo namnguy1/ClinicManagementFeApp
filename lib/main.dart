@@ -1,16 +1,19 @@
-
-import 'package:clinic_management_app/features/auth/screens/Login/login_screen.dart';
-import 'package:clinic_management_app/features/auth/screens/Login/otpSuccess_screen.dart';
-import 'package:clinic_management_app/features/auth/screens/Register/createpw_register_screen.dart';
-import 'package:clinic_management_app/features/auth/screens/Register/register_screen.dart';
-import 'package:clinic_management_app/features/auth/screens/Welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-// import classes
+import 'package:clinic_management_app/core/routes/app_router.dart';
+import 'package:clinic_management_app/core/theme/app_theme.dart';
+import 'package:provider/provider.dart';
+import 'features/auth/presentation/provider/auth_provider.dart';
 
-void main() async{
-  WidgetsFlutterBinding.ensureInitialized(); // CẦN THIẾT để khởi tạo Firebase
-  await Firebase.initializeApp(); // KHỞI TẠO FIREBASE
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    debugPrint('Failed to initialize Firebase: $e');
+  }
+  
   runApp(const MyApp());
 }
 
@@ -19,20 +22,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Clinic App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'Roboto'),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const WelcomeScreen(),
-        '/register': (context) => const RegisterScreen(),
-        // '/otp': (context) => const OtpScreen(),
-        '/login': (context) => const LoginScreen(),
-        // '/forgot': (context) => const OtpScreen(),
-        '/otp_success': (c) => const OtpSuccessScreen(),
-        '/create_password': (c) => const CreatePasswordScreen(),
-      },
+    return ChangeNotifierProvider(
+      create: (_) => AuthProvider(),
+      child: MaterialApp.router(
+        title: 'Clinic App',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        routerConfig: appRouter,
+      ),
     );
   }
 }

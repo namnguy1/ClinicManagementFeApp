@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:clinic_management_app/features/auth/screens/Register/createpw_register_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
 
-class OtpRegisterScreen extends StatefulWidget {
+class OtpForgotPasswordScreen extends StatefulWidget {
   final String verificationId;
   final String phoneNumber;
 
-  const OtpRegisterScreen({
+  const OtpForgotPasswordScreen({
     Key? key,
     required this.verificationId,
     required this.phoneNumber,
   }) : super(key: key);
 
   @override
-  State<OtpRegisterScreen> createState() => _OtpRegisterScreenState();
+  State<OtpForgotPasswordScreen> createState() => _OtpForgotPasswordScreenState();
 }
 
-class _OtpRegisterScreenState extends State<OtpRegisterScreen> {
+class _OtpForgotPasswordScreenState extends State<OtpForgotPasswordScreen> {
   final List<TextEditingController> _otpControllers = List.generate(
     6,
     (index) => TextEditingController(),
@@ -49,19 +49,7 @@ class _OtpRegisterScreenState extends State<OtpRegisterScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Xác minh thành công')),
         );
-        Navigator.of(context).push(PageRouteBuilder(
-          pageBuilder: (_, __, ___) => const CreatePasswordScreen(),
-          transitionsBuilder: (_, animation, __, child) {
-            final tween = Tween(
-              begin: const Offset(1, 0),
-              end: Offset.zero,
-            ).chain(CurveTween(curve: Curves.ease));
-            return SlideTransition(
-              position: animation.drive(tween),
-              child: child,
-            );
-          },
-        ));
+        context.push('/new-password');
       }
     } catch (e) {
       if (mounted) {

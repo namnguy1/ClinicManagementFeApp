@@ -1,9 +1,74 @@
-import 'package:clinic_management_app/features/auth/screens/Register/otp_register_screen.dart';
-import 'package:clinic_management_app/features/auth/screens/Register/register_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:clinic_management_app/core/utils/error_handler.dart';
+import 'package:clinic_management_app/features/auth/presentation/provider/auth_provider.dart';
+import 'package:clinic_management_app/features/auth/widgets/auth_button.dart';
+import 'package:clinic_management_app/features/auth/widgets/auth_text_field.dart';
+import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class ForgotPasswordScreen extends StatelessWidget {
+class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
+
+  @override
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+}
+
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _phoneController = TextEditingController();
+  String _verificationId = '';
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  void _handleForgotPassword(BuildContext context) async {
+    if (_formKey.currentState?.validate() ?? false) {
+      try {
+        await FirebaseAuth.instance.verifyPhoneNumber(
+          phoneNumber: '+84${_phoneController.text}',
+          verificationCompleted: (PhoneAuthCredential credential) async {
+            // Tự động xác minh (Android)
+            await FirebaseAuth.instance.signInWithCredential(credential);
+          },
+          verificationFailed: (FirebaseAuthException e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Lỗi: [${e.message}')),
+            );
+          },
+          codeSent: (String verificationId, int? resendToken) {
+            setState(() {
+              _verificationId = verificationId;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('OTP đã được gửi')),
+            );
+            Future.delayed(const Duration(seconds: 2), () {
+              context.push(
+                '/otp-forgot',
+                extra: {
+                  'verificationId': _verificationId,
+                  'phoneNumber': _phoneController.text,
+                },
+              );
+            });
+          },
+          codeAutoRetrievalTimeout: (String verificationId) {
+            setState(() {
+              _verificationId = verificationId;
+            });
+          },
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Lỗi: [${e.toString()}')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +97,6 @@ class ForgotPasswordScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-
           // Form block
           Expanded(
             child: Container(
@@ -52,96 +116,43 @@ class ForgotPasswordScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Tiêu đề
-                  const Text(
-                    'Nhập số điện thoại',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1A237E),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    const Text(
+                      'Quên mật khẩu',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1A237E),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Hướng dẫn
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Text(
-                      'Nhập số điện thoại để nhận mã xác thực',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Số điện thoại input
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: TextField(
+                    const SizedBox(height: 16),
+                    AuthTextField(
+                      controller: _phoneController,
+                      hintText: 'Nhập số điện thoại',
                       keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        prefixText: '+84 ',
-                        hintText: 'Nhập số điện thoại',
-                        filled: true,
-                        fillColor: const Color(0xFFF3F5F9),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                      ),
+                      prefixText: '+84 ',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Vui lòng nhập số điện thoại';
+                        }
+                        if (value.length < 9) {
+                          return 'Số điện thoại không hợp lệ';
+                        }
+                        return null;
+                      },
                     ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Nút Tiếp tục
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(PageRouteBuilder(
-                            pageBuilder: (_, __, ___) =>
-                                const RegisterScreen(),
-                            transitionsBuilder: (_, animation, __, child) {
-                              final tween = Tween(
-                                      begin: const Offset(1, 0),
-                                      end: Offset.zero)
-                                  .chain(CurveTween(curve: Curves.ease));
-                              return SlideTransition(
-                                  position: animation.drive(tween),
-                                  child: child);
-                            },
-                          ));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2196F3),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          'Tiếp tục',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                    const SizedBox(height: 24),
+                    AuthButton(
+                      text: 'Tiếp tục',
+                      onPressed: () => _handleForgotPassword(context),
+                      isLoading: false,
                     ),
-                  ),
-
-                  const Spacer(),
-                ],
+                    const Spacer(),
+                  ],
+                ),
               ),
             ),
           ),

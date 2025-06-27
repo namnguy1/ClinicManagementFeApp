@@ -34,6 +34,9 @@ dependencies:
   get: ^4.6.6           # hoặc provider / bloc tùy cách quản lý state
   flutter_svg: ^2.0.7   # nếu dùng SVG từ Figma
   http: ^1.4.0         # gọi API
+  go_router: ^13.0.0
+  equatable: ^2.0.5
+  flutter_bloc: ^8.1.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

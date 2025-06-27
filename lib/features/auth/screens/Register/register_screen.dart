@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:clinic_management_app/features/auth/screens/Register/otp_register_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -35,23 +36,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
           );
           // Delay 2 seconds before navigating to OTP screen
           Future.delayed(const Duration(seconds: 2), () {
-            Navigator.of(context).push(PageRouteBuilder(
-              pageBuilder: (_, __, ___) => OtpScreen(
-                isForgotFlow: false,
-                verificationId: _verificationId,
-                phoneNumber: _phoneController.text,
-              ),
-              transitionsBuilder: (_, animation, __, child) {
-                final tween = Tween(
-                  begin: const Offset(1, 0),
-                  end: Offset.zero,
-                ).chain(CurveTween(curve: Curves.ease));
-                return SlideTransition(
-                  position: animation.drive(tween),
-                  child: child,
-                );
+            context.push(
+              '/otp-register',
+              extra: {
+                'verificationId': _verificationId,
+                'phoneNumber': _phoneController.text,
               },
-            ));
+            );
           });
         },
         codeAutoRetrievalTimeout: (String verificationId) {

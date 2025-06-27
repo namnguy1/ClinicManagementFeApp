@@ -1,7 +1,35 @@
 import 'package:flutter/material.dart';
 
-class OtpSuccessScreen extends StatelessWidget {
-  const OtpSuccessScreen({super.key});
+class NewPasswordScreen extends StatefulWidget {
+  const NewPasswordScreen({super.key});
+
+  @override
+  State<NewPasswordScreen> createState() => _NewPasswordScreenState();
+}
+
+class _NewPasswordScreenState extends State<NewPasswordScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  bool _obscurePassword = true;
+  bool _obscureConfirm = true;
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void _handleSubmit() {
+    if (_formKey.currentState?.validate() ?? false) {
+      // TODO: Gọi API đổi mật khẩu ở đây
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Đổi mật khẩu thành công!')),
+      );
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,56 +57,92 @@ class OtpSuccessScreen extends StatelessWidget {
               ),
             ),
           ),
-
           const SizedBox(height: 16),
-
-          // White card
+          // Form block
           Expanded(
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
               ),
-              child: Column(
-                children: [
-                  const Text(
-                    'Tạo mật khẩu mới',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1A237E),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Tạo mật khẩu mới',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1A237E),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Success icon
-                  Image.asset(
-                    'assets/images/success_button.png',
-                    height: 120,
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  const Text(
-                    'Bây giờ bạn có thể tạo lại mật khẩu mới. '
-                    'Tài khoản và mật khẩu dùng để đăng nhập '
-                    'trên bất kỳ thiết bị nào.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
-
-                  const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: SizedBox(
+                    const SizedBox(height: 24),
+                    TextFormField(
+                      controller: _passwordController,
+                      obscureText: _obscurePassword,
+                      decoration: InputDecoration(
+                        labelText: 'Mật khẩu mới',
+                        filled: true,
+                        fillColor: const Color(0xFFF3F5F9),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Vui lòng nhập mật khẩu mới';
+                        }
+                        if (value.length < 6) {
+                          return 'Mật khẩu phải có ít nhất 6 ký tự';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _confirmPasswordController,
+                      obscureText: _obscureConfirm,
+                      decoration: InputDecoration(
+                        labelText: 'Xác nhận mật khẩu',
+                        filled: true,
+                        fillColor: const Color(0xFFF3F5F9),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(_obscureConfirm ? Icons.visibility_off : Icons.visibility),
+                          onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Vui lòng xác nhận mật khẩu';
+                        }
+                        if (value != _passwordController.text) {
+                          return 'Mật khẩu xác nhận không khớp';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 32),
+                    SizedBox(
                       width: double.infinity,
                       height: 48,
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/create_password');
-                        },
+                        onPressed: _handleSubmit,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2196F3),
                           shape: RoundedRectangleBorder(
@@ -86,7 +150,7 @@ class OtpSuccessScreen extends StatelessWidget {
                           ),
                         ),
                         child: const Text(
-                          'Tạo mật khẩu mới',
+                          'Xác nhận',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -95,10 +159,9 @@ class OtpSuccessScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ),
-
-                  const SizedBox(height: 24),
-                ],
+                    const Spacer(),
+                  ],
+                ),
               ),
             ),
           ),
